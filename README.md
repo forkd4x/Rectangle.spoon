@@ -33,5 +33,5 @@ hs.loadSpoon("Rectangle"):bindHotkeys({
   focus_right  = { mods, "l" },
   focus_up     = { mods, "k" },
   focus_down   = { mods, "j" },
-})
+}):addGap(5) -- Add 5 pixel gap around windows (optional)
 ```
