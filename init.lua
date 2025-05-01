@@ -30,9 +30,9 @@ end
 function obj:resize(delta)
   local frame = hs.window.focusedWindow():frame()
   local screen = hs.screen.mainScreen():fullFrame()
-  local menubar = hs.menubar.new():frame()
+  local menubar = screen.h - hs.screen.mainScreen():frame().h
   local resize_w = frame.w < screen.w - self.gap.p * 2
-  local resize_h = frame.h <= screen.h - menubar.h - self.gap.p * 2.5
+  local resize_h = frame.h <= screen.h - menubar - self.gap.p * 2.5
   if resize_w or not resize_h then
     if frame.x + frame.w + self.gap.w > screen.w then
       frame.x = frame.x - delta
@@ -44,13 +44,13 @@ function obj:resize(delta)
   if resize_h or not resize_w then
     if frame.y + frame.h > screen.h then
       frame.y = frame.y - delta
-    elseif frame.y - self.gap.p * 1.5 >= menubar.h or not resize_w then
+    elseif frame.y - self.gap.p * 1.5 >= menubar or not resize_w then
       frame.y = frame.y - delta / 2
     end
-    frame.h = math.min(frame.h + delta, screen.h - menubar.h - self.gap.p * 2)
+    frame.h = math.min(frame.h + delta, screen.h - menubar - self.gap.p * 2)
   end
   frame.x = math.max(frame.x, self.gap.p)
-  frame.y = math.max(frame.y, menubar.h + self.gap.p)
+  frame.y = math.max(frame.y, menubar + self.gap.p)
   hs.window.focusedWindow():setFrame(frame)
 end
 
