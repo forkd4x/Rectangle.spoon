@@ -20,10 +20,10 @@ end
 
 function obj:move(rect)
   hs.window.focusedWindow():moveToUnit({
-    rect[1] + self.gap.w,
-    rect[2] + self.gap.h,
-    rect[3] - self.gap.w * 2,
-    rect[4] - self.gap.h * 2,
+    rect[1] + (rect[1] < 0.1 and self.gap.w or self.gap.w / 2),
+    rect[2] + (rect[2] < 0.1 and self.gap.h or self.gap.h / 2),
+    rect[3] - self.gap.w * (rect[3] > 0.9 and 2 or 1.5),
+    rect[4] - self.gap.h * (rect[4] > 0.9 and 2 or 1.5),
   })
 end
 
@@ -31,22 +31,25 @@ function obj:resize(delta)
   local frame = hs.window.focusedWindow():frame()
   local screen = hs.screen.mainScreen():fullFrame()
   local menubar = hs.menubar.new():frame()
-  if frame.w < screen.w - self.gap.p * 2 then
-    if frame.x + frame.w + self.gap.p * 2 >= screen.w then
+  local resize_w = frame.w < screen.w - self.gap.p * 2
+  local resize_h = frame.h <= screen.h - menubar.h - self.gap.p * 2.5
+  if resize_w or not resize_h then
+    if frame.x + frame.w + self.gap.w > screen.w then
       frame.x = frame.x - delta
-    elseif frame.x - self.gap.p > 0 then
+    elseif frame.x - self.gap.p > 0 or not resize_h then
       frame.x = frame.x - delta / 2
     end
     frame.w = math.min(frame.w + delta, screen.w - self.gap.p * 2)
   end
-  if frame.h < screen.h - menubar.h - self.gap.p * 2 then
-    if frame.y + frame.h + self.gap.p * 2 > screen.h - menubar.h then
+  if resize_h or not resize_w then
+    if frame.y + frame.h > screen.h then
       frame.y = frame.y - delta
-    elseif frame.y - self.gap.p > menubar.h then
+    elseif frame.y - self.gap.p * 1.5 >= menubar.h or not resize_w then
       frame.y = frame.y - delta / 2
     end
     frame.h = math.min(frame.h + delta, screen.h - menubar.h - self.gap.p * 2)
   end
+  frame.x = math.max(frame.x, self.gap.p)
   frame.y = math.max(frame.y, menubar.h + self.gap.p)
   hs.window.focusedWindow():setFrame(frame)
 end
