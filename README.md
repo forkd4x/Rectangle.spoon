@@ -13,8 +13,8 @@ git clone https://github.com/forkd4x/Rectangle.spoon.git ~/.hammerspoon/Spoons/R
 Add to `~/.hammerspoon/init.lua`
 ```lua
 local mods = { "ctrl", "cmd" }
-
-hs.loadSpoon("Rectangle"):bindHotkeys({
+local rectangle = hs.loadSpoon("Rectangle")
+rectangle:bindHotkeys({
   left_half    = { mods, "a" },
   right_half   = { mods, "d" },
   center_half  = { mods, "s" },
@@ -26,6 +26,7 @@ hs.loadSpoon("Rectangle"):bindHotkeys({
   bottom_right = { mods, "c" },
   maximize     = { mods, "f" },
   almost_max   = { mods, "g" },
+  max_height   = { mods, "9" },
   smaller      = { mods, "-" },
   larger       = { mods, "=" },
   center       = { mods, "0" },
@@ -34,5 +35,7 @@ hs.loadSpoon("Rectangle"):bindHotkeys({
   focus_up     = { mods, "k" },
   focus_down   = { mods, "j" },
   focus_under  = { mods, "u" },
-}):addGap(10) -- Add 10 pixel gap around/between windows (optional)
+})
+-- Add 10 pixel gap around/between windows (optional)
+rectangle:config({ margings = 10 })
 ```
