@@ -86,16 +86,30 @@ function obj:focus_right() hs.window.focusedWindow():focusWindowEast(nil, true, 
 function obj:focus_up() hs.window.focusedWindow():focusWindowNorth(nil, true, true) end
 function obj:focus_down() hs.window.focusedWindow():focusWindowSouth(nil, true, true) end
 
--- FIX: Focusing windows not under active window; flashing windows
+obj.focus_frame = nil
 function obj:focus_under()
-  hs.window.focusedWindow():sendToBack()
+  obj.focus_frame = obj.focus_frame or hs.window.focusedWindow():frame()
+  local wins = hs.window.orderedWindows()
+  for z = #wins, 1, -1 do
+    local win = wins[z]
+    local u = obj.focus_frame:intersect(win:frame())
+    if u.h > 0 and u.w > 0 then
+      win:focus()
+      break
+    end
+  end
 end
 
 -- TODO: obj:restore()
 
 local function bindSpecIf(bindSpec, pressedfn)
   if not bindSpec then return end
-  hs.hotkey.bindSpec(bindSpec, pressedfn)
+  hs.hotkey.bindSpec(bindSpec, function()
+    if pressedfn ~= obj.focus_under then
+      obj.focus_frame = nil
+    end
+    pressedfn()
+  end)
 end
 
 function obj:bindHotkeys(mapping)
